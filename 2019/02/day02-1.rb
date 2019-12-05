@@ -41,7 +41,9 @@ def calc_grav(d)
 
     when 99
       puts 'Exit code found'
-      break
+      input_str = input.join ','
+      puts "Output: #{input_str}"
+      return input_str
     end # case
 
     break if cur_pos + 4 > input.length  # Increment the input
