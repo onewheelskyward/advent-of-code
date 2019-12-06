@@ -3,6 +3,7 @@ def log
   false
 end
 
+# Day 3.1
 # Determine the shortest sawtooth line between two points
 def get_manhattan_dist(wire1, wire2)
   matches = []
@@ -20,6 +21,26 @@ def get_manhattan_dist(wire1, wire2)
   end
 
   manhattan_distances.min
+end
+
+# Day 3.2
+# Determine the shortest step distance to an intersection.
+def get_step_dist(wire1, wire2)
+  matches = []
+  wire1.keys.each do |w1key|
+    if wire2[w1key]
+      matches.push w1key if w1key != [0, 0]
+    end
+  end
+
+  puts matches.inspect if log
+
+  step_distances = []
+  matches.each do |match|
+    step_distances.push wire1[match] + wire2[match]
+  end
+
+  step_distances.min
 end
 
 # Turn the logo directions into coordinate point sets
@@ -52,7 +73,7 @@ def map_wire_coords(wiremap_str)
   end
 
   # Rebuild the array into a hash for easier matching later.
-  position = 1
+  position = 0
   wire_coords_hash = {}
   wire_coords.each do |coord|
     wire_coords_hash[coord] = position  unless wire_coords_hash[coord]
@@ -82,6 +103,16 @@ def wire_map_manhattan(d)
   wire1, wire2 = parse_wires(d)
 
   get_manhattan_dist(wire1, wire2)
+
+  #puts "Output: #{input_str}"  if log
+  #input_str
+end
+
+# Perform the mapping and then the
+def wire_map_steps(d)
+  wire1, wire2 = parse_wires(d)
+
+  get_step_dist(wire1, wire2)
 
   #puts "Output: #{input_str}"  if log
   #input_str

@@ -1,7 +1,7 @@
 require 'rspec'
 require_relative 'wire_map'
 
-describe 'day3 tests' do
+describe 'day3.1 tests' do
   it "test 1" do
     input = "R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83"
     output = 159
