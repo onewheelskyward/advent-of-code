@@ -1,7 +1,10 @@
+# Log log log
+def log
+  false
+end
+
 # Determine the shortest sawtooth line between two points
 def get_manhattan_dist(wire1, wire2)
-  log = false
-
   matches = []
   wire1.keys.each do |w1key|
     if wire2[w1key]
@@ -52,15 +55,15 @@ def map_wire_coords(wiremap_str)
   position = 1
   wire_coords_hash = {}
   wire_coords.each do |coord|
-    wire_coords_hash[coord] = position
+    wire_coords_hash[coord] = position  unless wire_coords_hash[coord]
     position += 1
   end
 
   wire_coords_hash
 end
 
+# Take the string input and turn it into a wire array.
 def parse_wires(d)
-  log = false
   puts "Input: #{d}" if log
 
   wires = d.split(/\n/)
