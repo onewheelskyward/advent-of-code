@@ -18,7 +18,8 @@
 # Once you're done processing an opcode, move to the next one by stepping forward 4 positions.
 
 def calc_grav(d)
-  puts "Input: #{d}"
+  log = false
+  puts "Input: #{d}"  if log
 
   input = d.split(/,/).map(&:to_i)     # Compile the "program"
   cur_pos = 0
@@ -40,17 +41,18 @@ def calc_grav(d)
       input[alter_pos] = calculated
 
     when 99
-      puts 'Exit code found'
+      puts 'Exit code found'  if log
       input_str = input.join ','
-      puts "Output: #{input_str}"
+      puts "Output: #{input_str}"  if log
       return input_str
     end # case
 
     break if cur_pos + 4 > input.length  # Increment the input
+
     cur_pos += 4
   end
 
   input_str = input.join ','
-  puts "Output: #{input_str}"
+  puts "Output: #{input_str}"  if log
   input_str
 end
