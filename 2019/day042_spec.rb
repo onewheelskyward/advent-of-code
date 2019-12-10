@@ -82,7 +82,7 @@ describe 'day4.2 tests' do
 
   it "does day 4.1" do
     input = "193651-649729"
-    output = 1604
-    expect(pw_cracker(input)).to eq(output)
+    output = 1102
+    expect(pw_cracker_2(input)).to eq(output)
   end
 end

@@ -80,13 +80,26 @@ def check_adjacent_digits_2(n)
   double = false
   narr = n.to_s.split ''
 
-  (1..narr.length - 1).each do |i|
-    if narr[i] == narr[i-1]
-      double = true
-      if i == narr.length - 1 and narr[i] == narr[i-2]
-        double = false
-      elsif narr[i] == narr[i+1] or narr[i] == narr[i-2]
-        double = false  # We be part of a triplet
+  #(1..narr.length - 1).each do |i|
+  #  if (narr[i] == narr[i-1] and narr[i] != narr[i+1]) and
+  #      (narr[i] == narr[i-1] and narr[i] != narr[i-2])
+  #    return true
+  #  end
+  #end
+
+  (0..narr.length - 1).each do |i|
+    case i
+    when 0
+      if narr[i] == narr[i+1] and narr[i+1] != narr[i+2]
+        double = true
+      end
+    when 1..3
+      if narr[i] == narr[i+1] and narr[i+1] != narr[i+2] and narr[i] != narr[i-1]
+        double = true
+      end
+    when 4
+      if narr[i] == narr[i+1] and narr[i] != narr[i-1]
+        double = true
       end
     end
   end
