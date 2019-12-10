@@ -19,10 +19,28 @@ end
 # How many different passwords within the range given in your puzzle input meet these criteria?
 def pw_cracker(input)
   potentials = {}
+
   (low, high) = input.split(/-/).map(&:to_i)
   (low..high).each do |n|
     cd = check_digits(n, low, high)
     ca = check_adjacent_digits n
+    ci = check_increasing_digits n
+
+    if cd and ca and ci
+      potentials[n] = 1
+    end
+  end
+
+  potentials.keys.count
+end
+
+def pw_cracker_2(input)
+  potentials = {}
+
+  (low, high) = input.split(/-/).map(&:to_i)
+  (low..high).each do |n|
+    cd = check_digits(n, low, high)
+    ca = check_adjacent_digits_2 n
     ci = check_increasing_digits n
 
     if cd and ca and ci
@@ -53,6 +71,27 @@ def check_adjacent_digits(n)
   end
 
   false
+end
+
+# Two adjacent digits are the same (like 22 in 122345).
+# the two adjacent matching digits are not part of a larger group of matching digits.
+# If there is one set of doubles everything else is ok.
+def check_adjacent_digits_2(n)
+  double = false
+  narr = n.to_s.split ''
+
+  (1..narr.length - 1).each do |i|
+    if narr[i] == narr[i-1]
+      double = true
+      if i == narr.length - 1 and narr[i] == narr[i-2]
+        double = false
+      elsif narr[i] == narr[i+1] or narr[i] == narr[i-2]
+        double = false  # We be part of a triplet
+      end
+    end
+  end
+
+  double
 end
 
 # Going from left to right, the digits never decrease; they only ever increase or stay the same (like 111123 or 135679).
