@@ -13,15 +13,16 @@
 
 class IntcodeCpu
   def log(str)
-    if true
+    if false
       puts str
     end
   end
 
-  def initialize(input)
+  def initialize(input, user_param = nil)
     self.log "Input: #{input}"
     @input = input.split(/,/).map(&:to_i)     # Compile the "program"
     @cur_pos = 0
+    @user_param = user_param
   end
 
   def process
@@ -119,8 +120,8 @@ class IntcodeCpu
   def do_3
     self.log("Processing #{@input[@cur_pos..@cur_pos+1]}")
     # double dereference to find the proper location.
-    print "Input: "
-    input = gets.chomp.to_i
+
+    input = @user_param || gets.chomp.to_i
     index = @input[@cur_pos + 1]
     @input[index] = input
     self.log("Setting @input[#{index}] = #{input}")
