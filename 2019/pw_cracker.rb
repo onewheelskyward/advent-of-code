@@ -1,6 +1,6 @@
 # Log log log
 def log
-  true
+  false
 end
 
 # Day 4.1

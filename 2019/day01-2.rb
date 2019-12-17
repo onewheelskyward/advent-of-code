@@ -4,6 +4,9 @@ File.open('input.txt').each do |l|
   masses.push l.to_i
 end
 
+def log
+  false
+end
 
 # divide by three, round down, and subtract 2.
 #     For a mass of 12, divide by 3 and round down to get 4, then subtract 2 to get 2.
@@ -12,9 +15,9 @@ end
 #     For a mass of 100756, the fuel required is 33583.
 
 def fuel_calc(m)
-  puts "Calculating f for #{m}"
+  puts "Calculating f for #{m}"  if log
   f = ((m / 3).floor - 2).to_i
-  puts "calculated #{f}"
+  puts "calculated #{f}"  if log
   f
 end
 

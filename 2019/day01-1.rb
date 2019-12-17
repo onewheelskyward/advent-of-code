@@ -11,6 +11,10 @@ end
 #     For a mass of 1969, the fuel required is 654.
 #     For a mass of 100756, the fuel required is 33583.
 
+def log
+  false
+end
+
 def fuel_calc(m)
   (m / 3).floor - 2
 end
@@ -21,7 +25,7 @@ fuel = 0
 
 masses.each do |m|
   f = fuel_calc m
-  puts f
+  puts f if log
   fuel += f
 end
 
