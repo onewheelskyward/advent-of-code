@@ -18,11 +18,10 @@ class IntcodeCpu
     end
   end
 
-  def initialize(input, param = nil)
+  def initialize(input)
     self.log "Input: #{input}"
     @input = input.split(/,/).map(&:to_i)     # Compile the "program"
     @cur_pos = 0
-    @param = param
   end
 
   def process
@@ -30,48 +29,48 @@ class IntcodeCpu
     pos_increment = 4
 
     loop do
-      if @input[@cur_pos].to_s.length > 1
+      @parm_modes = []
+      if @input[@cur_pos].to_s.length > 2
         command = @input[@cur_pos].to_s.rjust(5, "0")
 
         # It is important to remember that the instruction pointer should increase by the number
         # of values in the instruction after the instruction finishes. Because of the new
         # instructions, this amount is no longer always 4.
-        pos_increment = @input[@cur_pos].to_s.length - 1
+        #pos_increment = @input[@cur_pos].to_s.length - 1
 
-        self.log "Command #{command[3..4]}"
-        self.log "param 1 #{command[2]}"
-        self.log "param 2 #{command[1]}"
-        self.log "param 3 #{command[0]}"
+        #self.log "Command #{command[3..4]} - params [#{command[2]}, #{command[1]}, #{command[0]}]"
 
         operation = command[3..4].to_i
         @parm_modes = [command[2].to_i, command[1].to_i, command[0].to_i]
-      elsif [1,2].include? @input[@cur_pos]
+      elsif [1,2,3,4,99].include? @input[@cur_pos]
         operation = @input[@cur_pos]
-        pos_increment = 4
-      elsif [3,4].include? @input[@cur_pos]
-        operation = @input[@cur_pos]
-        pos_increment = 2
       end
 
       case operation
       when 1
         do_1
+        pos_increment = 4
 
       when 2
         do_2
+        pos_increment = 4
 
       when 3
         do_3
+        pos_increment = 2
 
       when 4
         four_result = do_4
+        pos_increment = 2
 
       when 99
         self.log 'Exit code found'
         input_str = @input.join ','
-        self.log "Output: #{input_str}"
+        self.log "Final: #{input_str}"
         #return @input[0]
         return input_str
+      else
+        raise "Oh me oh my what's a #{operation}?"
       end # case
 
       break if @cur_pos + pos_increment > @input.length  # Increment the input
@@ -96,6 +95,7 @@ class IntcodeCpu
   # For example, if your Intcode computer encounters 1,10,20,30, it should read the values at
   # positions 10 and 20, add those values, and then overwrite the value at position 30 with their sum.
   def do_1
+    self.log("Processing #{@input[@cur_pos..@cur_pos+3]}")
     input1, input2 = determine_inputs
 
     calculated = input1 + input2
@@ -106,6 +106,7 @@ class IntcodeCpu
   # Opcode 2 works exactly like opcode 1, except it multiplies the two inputs instead of adding them.
   # Again, the three integers after the opcode indicate where the inputs and outputs are, not their values.
   def do_2
+    self.log("Processing #{@input[@cur_pos..@cur_pos+3]}")
     input1, input2 = determine_inputs
 
     calculated = input1 * input2
@@ -113,17 +114,45 @@ class IntcodeCpu
     determine_output(calculated)
   end
 
+  # Opcode 3 takes a single integer as input and saves it to the position given by its only parameter.
+  # For example, the instruction 3,50 would take an input value and store it at address 50.
+  def do_3
+    self.log("Processing #{@input[@cur_pos..@cur_pos+1]}")
+    # double dereference to find the proper location.
+    print "Input: "
+    input = gets.chomp.to_i
+    index = @input[@cur_pos + 1]
+    @input[index] = input
+    self.log("Setting @input[#{index}] = #{input}")
+  end
+
+  # Opcode 4 outputs the value of its only parameter. For example, the instruction 4,50 would output
+  # the value at address 50.
+  def do_4
+    self.log("Processing #{@input[@cur_pos..@cur_pos+1]}")
+    self.log(@parm_modes)
+    if @parm_modes[0] == 1
+      result = @input[@cur_pos + 1]
+    else
+      result = @input[@input[@cur_pos + 1]]
+    end
+    puts "Output: #{result}"
+  end
+
   def determine_output(calculated)
     if @parm_modes
       if @parm_modes[2] == 1
+        self.log "Setting @input[#{@cur_pos+3}] = #{calculated}"
         @input[@cur_pos + 3] = calculated
       else
         alter_pos = @input[@cur_pos + 3]
         @input[alter_pos] = calculated
+        self.log "Setting @input[#{alter_pos}] = #{calculated}"
       end
     else
       alter_pos = @input[@cur_pos + 3]
       @input[alter_pos] = calculated
+      self.log "Setting @input[#{alter_pos}] = #{calculated}"
     end
   end
 
@@ -149,19 +178,6 @@ class IntcodeCpu
     end
     return input1, input2
 
-  end
-
-  # Opcode 3 takes a single integer as input and saves it to the position given by its only parameter.
-  # For example, the instruction 3,50 would take an input value and store it at address 50.
-  def do_3
-    # double dereference to find the proper location.
-    @input[@input[@cur_pos + 1]] = @param
-  end
-
-  # Opcode 4 outputs the value of its only parameter. For example, the instruction 4,50 would output
-  # the value at address 50.
-  def do_4
-    @input[@input[@cur_pos + 1]]
   end
 
 end
