@@ -12,6 +12,8 @@
 #
 
 class IntcodeCpu
+  attr_reader :output
+
   def log(str)
     if false
       puts str
@@ -43,8 +45,10 @@ class IntcodeCpu
 
         operation = command[3..4].to_i
         @parm_modes = [command[2].to_i, command[1].to_i, command[0].to_i]
-      elsif [1,2,3,4,99].include? @input[@cur_pos]
+      elsif [1,2,3,4,5,6,7,8,99].include? @input[@cur_pos]
         operation = @input[@cur_pos]
+      else
+        raise "Operation '#{@input[@cur_pos]}' not understood."
       end
 
       case operation
@@ -63,6 +67,30 @@ class IntcodeCpu
       when 4
         four_result = do_4
         pos_increment = 2
+
+      when 5
+        # jump-if-true, do_5 mutates the cur_pos, so don't increment it.
+        if do_5
+          pos_increment = 0
+        else
+          # Unless it returns false.
+          pos_increment = 3
+        end
+
+      when 6
+        if do_6
+          pos_increment = 0
+        else
+          pos_increment = 3
+        end
+
+      when 7
+        do_7
+        pos_increment = 4
+
+      when 8
+        do_8
+        pos_increment = 4
 
       when 99
         self.log 'Exit code found'
@@ -137,7 +165,79 @@ class IntcodeCpu
     else
       result = @input[@input[@cur_pos + 1]]
     end
+    @output = result
     puts "Output: #{result}"
+  end
+
+  # Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to
+  # the value from the second parameter. Otherwise, it does nothing.
+  def do_5
+    result = false
+    if @parm_modes[0] == 1
+      parm_1 = @input[@cur_pos+1]
+    else
+      parm_1 = @input[@input[@cur_pos+1]]
+    end
+
+    if parm_1 > 0
+      result = true
+      if @parm_modes[1] == 1
+        @cur_pos = @input[@cur_pos+2]
+      else
+        @cur_pos = @input[@input[@cur_pos+2]]
+      end
+    end
+    result
+  end
+
+  # Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to
+  # the value from the second parameter. Otherwise, it does nothing.
+  def do_6
+    result = false
+
+    if @parm_modes[0] == 1
+      parm_1 = @input[@cur_pos+1]
+    else
+      parm_1 = @input[@input[@cur_pos+1]]
+    end
+
+    if parm_1 == 0
+      result = true
+      if @parm_modes[1] == 1
+        @cur_pos = @input[@cur_pos+2]
+      else
+        @cur_pos = @input[@input[@cur_pos+2]]
+      end
+    end
+
+    result
+  end
+
+  # Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1
+  # in the position given by the third parameter. Otherwise, it stores 0.
+  def do_7
+    self.log "do_7: @input[#{@input[@cur_pos+1]}] < @input[#{@input[@cur_pos+2]}]"
+    input1, input2 = determine_inputs
+    if input1 < input2
+      self.log "do_7: #{input1}] < #{input2}]"
+      @input[@input[@cur_pos+3]] = 1
+    else
+      self.log "do_7: #{input1}] !< #{input2}]"
+      @input[@input[@cur_pos+3]] = 0
+    end
+  end
+
+  # Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in
+  # the position given by the third parameter. Otherwise, it stores 0.
+  def do_8
+    self.log "do_8: @input[#{@input[@cur_pos+1]}] == @input[#{@input[@cur_pos+2]}]"
+    input1, input2 = determine_inputs
+
+    if input1 == input2
+      @input[@input[@cur_pos+3]] = 1
+    else
+      @input[@input[@cur_pos+3]] = 0
+    end
   end
 
   def determine_output(calculated)
@@ -157,6 +257,9 @@ class IntcodeCpu
     end
   end
 
+  # Parameter mode vs immediate mode
+  # if the mode == 1, grab the value in place.
+  # If it is == 0, reference the field index in the field in question.
   def determine_inputs
     input1 = 0
     input2 = 0
