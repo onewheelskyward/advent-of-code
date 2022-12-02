@@ -16,6 +16,7 @@ puts elves.inspect
 
 elfcals = []
 
+# Get total cal count per elf
 elves.each do |elf|
   cals = elf.sum
   puts cals
@@ -24,6 +25,7 @@ end
 
 puts "D1-1 Max cals: #{elfcals.max}"
 
+# Sort the cal count for top three
 ec_sorted = elfcals.sort.reverse
 
 puts ec_sorted.inspect
