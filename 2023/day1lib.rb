@@ -38,8 +38,9 @@ class Day1lib
   @@debug = true
   @@run = true
 
-  def initialize(testdata=[], inputdata=[])
+  def initialize(testdata=[], testbdata=[], inputdata=[])
     @testdata = testdata
+    @testbdata = testbdata
     @inputdata = inputdata
 
     File.open('day1-test.txt').each do |l|
@@ -47,6 +48,13 @@ class Day1lib
       puts "Adding #{l} to @testdata"  if @@debug
       @testdata.push l
     end
+
+    File.open('day1b-test.txt').each do |l|
+      l.strip!
+      puts "Adding #{l} to @testbdata"  if @@debug
+      @testbdata.push l
+    end
+
     if @@run
       File.open('day1-input.txt').each do |l|
         l.strip!
@@ -62,16 +70,75 @@ class Day1lib
     process(@inputdata)  if @@run
   end
 
+  def runb
+    data = preprocess(@testbdata)
+    process(data)
+
+    if @@run
+      data = preprocess(@inputdata)
+      process(data)
+    end
+
+  end
+
+  def preprocess(data)
+    # -- Part Two ---
+    # Your calculation isn't quite right. It looks like some of the digits are actually spelled out with letters: one,
+    # two, three, four, five, six, seven, eight, and nine also count as valid "digits".
+    #
+    # Equipped with this new information, you now need to find the real first and last digit on each line. For example:
+    #
+    # two1nine
+    # eightwothree
+    # abcone2threexyz
+    # xtwone3four
+    # 4nineeightseven2
+    # zoneight234
+    # 7pqrstsixteen
+    # In this example, the calibration values are 29, 83, 13, 24, 42, 14, and 76. Adding these together produces 281.
+    #
+    # What is the sum of all of the calibration values?
+    words_hash = {'sixteen' => 16,
+                  'oneight' => 18,
+                  'threeight' => 38,
+                  'fiveight' => 58,
+                  'sevenine' => 79,
+                  'eightwo' => 82,
+                  'eighthree' => 83,
+                  'twone' => 21,
+                  'one' => 1,
+                  'two' => 2,
+                  'three' => 3,
+                  'four' => 4,
+                  'five' => 5,
+                  'six' => 6,
+                  'seven' => 7,
+                  'eight' => 8,
+                  'nine' => 9}
+    altered = []
+    data.each do |d|
+      puts " pre: #{d}"  if @@debug
+      modified_d = d
+      words_hash.each do |k, v|
+        # puts "modified_d = modified_d.gsub /#{k}/, #{v.to_s}"
+        modified_d = modified_d.gsub /#{k}/, v.to_s
+      end
+      puts "post: #{modified_d}"  if @@debug
+      altered.push modified_d
+    end
+    altered
+  end
+
   def process(data)
     puts data.inspect  if @@debug
     total = 0
     data.each do |dataline|
       m = /\d/.match(dataline)
-      puts m.inspect
+      # puts m.inspect
       d = dataline.scan(/\d/)
-      puts d.inspect
+      # puts d.inspect
       num = d.first.to_s + d.last.to_s
-      puts num
+      puts num  if @@debug
       total += num.to_i
     end
     puts "total: #{total}"
