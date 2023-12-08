@@ -33,10 +33,9 @@
 
 
 class Day2
-  @debug = true
-  @run = false
-
-  def initialize()
+  def initialize(debug = true, run = false)
+    @debug = debug
+    @run = run
     @testdata = []
     # @testbdata = []
     @inputdata = []
@@ -64,9 +63,9 @@ class Day2
   end
 
   def run
-    puts "running..."
-    process(@testdata)
-    process(@inputdata)  if @run
+    puts "running..."  if @debug
+    process(@testdata, {red: 12, green: 13, blue: 14})
+    process(@inputdata, {red: 12, green: 13, blue: 14})  if @run
   end
 
   def runb
@@ -83,7 +82,7 @@ class Day2
   def preprocess(data)
   end
 
-  def process(data)
+  def process(data, constraints = {red: 0, green: 0, blue: 0})
     possible_games = {}
     game_maxes = {}
 
@@ -98,9 +97,9 @@ class Day2
 
       # init array to store max values
       game_maxes[game] = {}
-      game_maxes[game]['red'] = 0
-      game_maxes[game]['blue'] = 0
-      game_maxes[game]['green'] = 0
+      game_maxes[game][:red] = 0
+      game_maxes[game][:blue] = 0
+      game_maxes[game][:green] = 0
 
       # Split the bag pull results per game
       cubes.split(/; /).each do |viewing|
@@ -111,14 +110,27 @@ class Day2
           match = /(?<count>\d+)\s+(?<color>\w+)/.match(molecule)
 
           # If the number for a color is bigger, plop it in!
-          if match[:count].to_i > game_maxes[game][match[:color]].to_i
-            game_maxes[game][match[:color]] = match[:count].to_i
+          if match[:count].to_i > game_maxes[game][match[:color].to_sym].to_i
+            game_maxes[game][match[:color].to_sym] = match[:count].to_i
           end
 
         end
-        puts 'x'
       end
     end
-    possible_games[game]
+
+    possible_games_count = 0
+    game_maxes.each do |game|
+      game_colors = game[1]
+      puts "Checking red #{game_colors[:red]} > #{constraints[:red]}, green #{game_colors[:green]} > #{constraints[:green]}, blue #{game_colors[:blue]} > #{constraints[:blue]}"  if @debug
+      if game_colors[:red] > constraints[:red] or
+        game_colors[:green] > constraints[:green] or
+        game_colors[:blue] > constraints[:blue]
+        puts "Couldn't have happened."
+      else
+        puts "Adding #{game[0].to_i} to possible_games_count"  if @debug
+        possible_games_count += game[0].to_i
+      end
+    end
+    puts "Total of game values possible: #{possible_games_count}"
   end
 end
