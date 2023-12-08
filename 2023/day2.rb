@@ -84,9 +84,34 @@ class Day2
   end
 
   def process(data)
+    possible_games = {}
+    game_maxes = {}
     data.each do |l|
       l.chomp!
-      puts l
+      puts l  if @debug
+      (game, cubes) = l.split /:\s+/
+      m = /Game (\d+)/.match game
+      game = m[1].to_s
+
+      game_maxes[game] = {}
+      game_maxes[game]['red'] = 0
+      game_maxes[game]['blue'] = 0
+      game_maxes[game]['green'] = 0
+
+      cubes.split(/; /).each do |viewing|
+        puts viewing  if @debug
+        # matches = viewing.scan(/(?<count>\d+)\s+(?<color>\w+)/)
+        viewing.split(/,/).each do |molecule|
+          match = /(?<count>\d+)\s+(?<color>\w+)/.match(molecule)
+
+          if match[:count].to_i > game_maxes[game][match[:color]].to_i
+            game_maxes[game][match[:color]] = match[:count].to_i
+          end
+
+        end
+        puts 'x'
+      end
     end
+    possible_games[game]
   end
 end
