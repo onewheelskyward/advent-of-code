@@ -33,7 +33,7 @@
 # Of course, the actual engine schematic is much larger. What is the sum of all of the part numbers in the engine
 # schematic?
 
-class Day2
+class Day3
   def initialize(debug = true, run = false)
     @debug = debug
     @run = run
@@ -48,11 +48,13 @@ class Day2
       @testdata.push l
     end
 
-    # File.open("#{day}b-test.txt").each do |l|
-    #   l.stri
-    #   puts "Addng #{l} to @testbdata"  if @@debug
-    #   @testbdata.push l
-    # end
+    if File.exist? "#{day}b-test.txt"
+      File.open("#{day}b-test.txt").each do |l|
+        l.stri
+        puts "Addng #{l} to @testbdata"  if @@debug
+        @testbdata.push l
+      end
+    end
 
     if @run
       File.open("#{day}-input.txt").each do |l|
@@ -66,11 +68,11 @@ class Day2
   def run
     puts "running..."  if @debug
     test_maxes = process(@testdata)
-    tot_up(test_maxes, {red: 12, green: 13, blue: 14})
+    tot_up(test_maxes)
 
     if @run
       input_maxes = process(@inputdata)
-      tot_up(input_maxes, {red: 12, green: 13, blue: 14})
+      tot_up(input_maxes)
     end
   end
 
@@ -85,7 +87,7 @@ class Day2
     end
   end
 
-  def tot_up(game_maxes, constraints = {red: 0, green: 0, blue: 0})
+  def tot_up(game_maxes)
   end
 
   def tot_up_b(game_maxes)
