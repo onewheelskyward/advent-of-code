@@ -86,24 +86,31 @@ class Day2
   def process(data)
     possible_games = {}
     game_maxes = {}
+
+    # Iterate the games
     data.each do |l|
       l.chomp!
       puts l  if @debug
+      # Split Game 1: and game data
       (game, cubes) = l.split /:\s+/
       m = /Game (\d+)/.match game
       game = m[1].to_s
 
+      # init array to store max values
       game_maxes[game] = {}
       game_maxes[game]['red'] = 0
       game_maxes[game]['blue'] = 0
       game_maxes[game]['green'] = 0
 
+      # Split the bag pull results per game
       cubes.split(/; /).each do |viewing|
         puts viewing  if @debug
-        # matches = viewing.scan(/(?<count>\d+)\s+(?<color>\w+)/)
+        # Split the pull into component colors
         viewing.split(/,/).each do |molecule|
+          # Named regex for nice readability
           match = /(?<count>\d+)\s+(?<color>\w+)/.match(molecule)
 
+          # If the number for a color is bigger, plop it in!
           if match[:count].to_i > game_maxes[game][match[:color]].to_i
             game_maxes[game][match[:color]] = match[:count].to_i
           end
