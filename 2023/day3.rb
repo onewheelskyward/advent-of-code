@@ -94,6 +94,14 @@ class Day3
   end
 
   def process(data)
+    grid = []
+    # First generate the dimensional array
+    data.each do |l|
+      l.chomp!
+      l_arr = l.split('')
+      grid.push l_arr
+    end
+    grid
   end
 
 end
