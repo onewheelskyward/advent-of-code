@@ -67,27 +67,34 @@ class Day3
 
   def run
     puts "running..."  if @debug
-    test_maxes = process(@testdata)
-    tot_up(test_maxes)
+    grid = process(@testdata)
+    find_parts(grid)
 
     if @run
-      input_maxes = process(@inputdata)
-      tot_up(input_maxes)
+      input_grid = process(@inputdata)
+      tot_up(input_grid)
     end
   end
 
   def runb
     puts "running..."  if @debug
-    test_maxes = process(@testdata)
-    tot_up_b(test_maxes)
+    grid = process(@testdata)
+    find_parts(grid)
 
     if @run
-      input_maxes = process(@inputdata)
-      tot_up_b(input_maxes)
+      input_grid = process(@inputdata)
+      find_parts(input_grid)
     end
   end
 
-  def tot_up(game_maxes)
+  def find_parts(grid)
+    grid.each_with_index do |grid_line, lindex|
+      grid_line.each_with_index do |char, rindex|
+        if char[/\d/]
+          puts "#{char} at #{lindex},#{rindex}"
+        end
+      end
+    end
   end
 
   def tot_up_b(game_maxes)
