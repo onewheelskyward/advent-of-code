@@ -50,7 +50,7 @@ class Day3
 
     if File.exist? "#{day}b-test.txt"
       File.open("#{day}b-test.txt").each do |l|
-        l.stri
+        l.strip!
         puts "Addng #{l} to @testbdata"  if @@debug
         @testbdata.push l
       end
@@ -89,15 +89,39 @@ class Day3
 
   def find_parts(grid)
     grid.each_with_index do |grid_line, lindex|
+      is_number = false
+      curnum = ''
       grid_line.each_with_index do |char, rindex|
         if char[/\d/]
+          in_number = true
           puts "#{char} at #{lindex},#{rindex}"
+          # Look for adjacent symbols
+          # -1+1 on both indices
+          if lindex > 0
+            s = check_for_symbol(grid[lindex - 1][rindex])
+          end
+        else
+          in_number = false
+        end
+        if in_number
+          curnum += char.to_s
+        end
+        if !in_number
+          puts "curnum: #{curnum}"
+          curnum = ''
         end
       end
     end
   end
 
-  def tot_up_b(game_maxes)
+  def check_for_symbol(char)
+    if char == '.' or char[/\d/]
+      puts "#{char} is . or \\d"  if @debug
+      false
+    else
+      puts "#{char} is a symbol!"  if @debug
+      true
+    end
   end
 
   def process(data)
