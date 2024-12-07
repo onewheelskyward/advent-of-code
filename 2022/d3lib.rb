@@ -38,15 +38,38 @@ class D3lib
       end
 
       # Score the char
-      char_score = shared_char.ord
-      if char_score <= 90
-        char_score -= 38
-      elsif char_score >= 97
-        char_score -= 96
-      end
+      char_score = score_char(shared_char)
       puts char_score  if @@debug
       overall_score += char_score
     end
     overall_score
+  end
+
+  def score_char(shared_char)
+    char_score = shared_char.ord
+    if char_score <= 90
+      char_score -= 38
+    elsif char_score >= 97
+      char_score -= 96
+    end
+    char_score
+  end
+
+  def score2
+    count = 0
+    bd3 = []
+    tmp_arr = []
+    @breakdown.each do |f, s|
+      if count <= 2
+        tmp_arr.push [f, s]
+        count += 1
+      end
+
+      if count == 3
+        bd3.push tmp_arr
+        count = 0
+        tmp_arr = []
+      end
+    end
   end
 end

@@ -19,6 +19,11 @@ describe D3lib do
         d3 = D3lib.new('d3.txt')
         expect(d3.score).to eq(7967)
       end
+
+      it "test2" do
+        d3 = D3lib.new('d3-2.txt')
+        expect(d3.score2).to eq(70)
+      end
     end
   end
 end

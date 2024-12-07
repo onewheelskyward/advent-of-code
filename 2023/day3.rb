@@ -88,18 +88,41 @@ class Day3
   end
 
   def find_parts(grid)
-    grid.each_with_index do |grid_line, lindex|
+    grid.each_with_index do |grid_line, y|
       is_number = false
       curnum = ''
-      grid_line.each_with_index do |char, rindex|
+      adjacent_symbol_found = false
+      grid_line.each_with_index do |char, x|
         if char[/\d/]
           in_number = true
-          puts "#{char} at #{lindex},#{rindex}"
+          puts "#{char} at #{x},#{y}"
           # Look for adjacent symbols
           # -1+1 on both indices
-          if lindex > 0
-            s = check_for_symbol(grid[lindex - 1][rindex])
+          if x == 0 and y == 0
+            # +1,+1
+            adjacent_symbol_found = check_for_symbol(grid[x + 1][y]) ||
+              check_for_symbol(grid[x][y + 1]) ||
+              adjacent_symbol_found
+          elsif x < grid_line.length - 1 and y < grid.length - 1
+            # +1,+1; -1, -1
+            adjacent_symbol_found = check_for_symbol(grid[x + 1][y]) ||
+              check_for_symbol(grid[x][y + 1]) ||
+              check_for_symbol(grid[x + 1][y + 1]) ||
+              adjacent_symbol_found
+          elsif x == 0 and y < grid.length - 1
+            # +1,+1; +1,-1
+            adjacent_symbol_found = check_for_symbol(grid[x + 1][y]) ||
+              check_for_symbol(grid[x][y + 1]) ||
+              check_for_symbol(grid[x + 1][y + 1]) ||
+              adjacent_symbol_found
+          elsif x < grid_line.length - 1 and y == 0
+            adjacent_symbol_found = check_for_symbol(grid[x + 1][y]) ||
+              check_for_symbol(grid[x][y + 1]) ||
+              check_for_symbol(grid[x + 1][y + 1]) ||
+              adjacent_symbol_found
           end
+          puts "asf: #{adjacent_symbol_found}"
+          puts "num #{curnum} symbol = #{adjacent_symbol_found}"  if @debug
         else
           in_number = false
         end
@@ -116,10 +139,10 @@ class Day3
 
   def check_for_symbol(char)
     if char == '.' or char[/\d/]
-      puts "#{char} is . or \\d"  if @debug
+      # puts "#{char} is . or \\d"  if @debug
       false
     else
-      puts "#{char} is a symbol!"  if @debug
+      # puts "#{char} is a symbol!"  if @debug
       true
     end
   end
