@@ -15,6 +15,11 @@ describe Day1 do
         @d.run
       end
 
+      it "runs" do
+        puts "running2"
+        @d.run2
+      end
+
     end
   end
 end

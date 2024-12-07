@@ -24,4 +24,23 @@ class Day1
     end
     puts "Distance = #{dist}"
   end
+
+  def run2
+    # Prep the similarity count hash
+    data_hash = {}
+    @data_right.each do |d|
+      if data_hash[d]
+        data_hash[d] += 1
+      else
+        data_hash[d] = 1
+      end
+    end
+    # puts data_hash.inspect
+
+    similarity_count = 0
+    @data_left.each do |e|
+      similarity_count += e * data_hash[e].to_i
+    end
+    puts "Similarity count: #{similarity_count}"
+  end
 end
